@@ -18,7 +18,6 @@ class Sonnets(Thread):
                 file.write("{} \n".format(self.read()))
                 
     def read(self):
-        with lock:
             with open(self.sonnet, 'r') as file:
                 content = file.read()
                 return content
@@ -27,32 +26,23 @@ class Sonnets(Thread):
 path=os.path.abspath('data')
 folder_path = path
 arrayFile = []
-num = []
 pattern = r'\d+'
 
 
 for path, dirs, files in os.walk(folder_path):
     for filename in files:
         match = re.search(pattern, filename)
-        num.append(int(match.group()))
         arrayFile.append(filename)
-        
-print(num)
 
 for i in range(0,len(arrayFile)):
-    for j in range(1,len(arrayFile)):
-        num1 = match = re.search(pattern, arrayFile[i])
-        num2 = match = re.search(pattern, arrayFile[j])
-        # print(int(num1.group()) ,int(num2.group()) )
-        print(i,j)
-        if int(num1.group()) > int(num2.group()) :
-          arrayFile[i] , arrayFile[j] = arrayFile[j] , arrayFile[i]
+    for j in range(0,len(arrayFile)-1):
+        num1 = match = re.search(pattern, arrayFile[j])
+        num2 = match = re.search(pattern, arrayFile[j+1])
+        if int(num2.group()) < int(num1.group()) :
+          arrayFile[j] , arrayFile[j+1] = arrayFile[j+1] , arrayFile[j]
 
-num.sort()
 
-print(arrayFile)
-
-# for i in range(0,len(num)):
-#     file = "data/data_part_{}.txt".format(num[i])
-#     thread = Sonnets(file)
-#     thread.start()
+for i in range(0,len(arrayFile)):
+    file = "data/{}".format(arrayFile[i])
+    thread = Sonnets(file)
+    thread.start()
